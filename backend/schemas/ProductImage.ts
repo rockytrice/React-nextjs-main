@@ -1,6 +1,7 @@
-import { text } from '@keystone-next/fields';
-import { list } from '@keystone-next/keystone/schema';
 import { cloudinaryImage } from '@keystone-next/cloudinary';
+import { relationship, text } from '@keystone-next/fields';
+import { list } from '@keystone-next/keystone/schema';
+
 import 'dotenv/config';
 
 // cloudinary config
@@ -19,5 +20,13 @@ export const ProductImage = list({
       label: 'Source',
     }),
     altText: text(),
+    // reference the photo
+    product: relationship({ ref: 'Product.photo' }),
+  },
+  ui: {
+    listView: {
+      // array of fields that will show up by default
+      initialColumns: ['altText', 'image', 'product'],
+    },
   },
 });
