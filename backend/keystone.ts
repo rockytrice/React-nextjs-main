@@ -1,13 +1,13 @@
-import 'dotenv/config';
-import { config, createSchema } from '@keystone-next/keystone/schema';
 import { createAuth } from '@keystone-next/auth';
-import {
-  withItemData,
-  statelessSessions,
-} from '@keystone-next/keystone/session';
-import { User } from './schemas/User';
+import { config, createSchema } from '@keystone-next/keystone/schema';
+import { statelessSessions, withItemData } from '@keystone-next/keystone/session';
+
 import { Product } from './schemas/Product';
 import { ProductImage } from './schemas/ProductImage';
+import { User } from './schemas/User';
+import { insertSeedData } from './seed-data';
+
+import 'dotenv/config';
 
 const databaseURL =
   process.env.DATABASE_URL || 'mongodb://localhost/keystone-sick-fits-tutorial';
@@ -40,6 +40,14 @@ export default withAuth(
       adapter: 'mongoose',
       url: databaseURL,
       // TODO: Add data seeding here
+      async onConnect(keystone) {
+        console.log('connected to the database!');
+        // once connected to database inject all of these items straight away
+        // only insert this data if we run npm run seed-data
+        if (process.argv.includes('--seed-data')) {
+          await insertSeedData(keystone);
+        }
+      },
     },
     lists: createSchema({
       // Schema items go here
